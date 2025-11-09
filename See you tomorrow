@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Press to Continue</title>
+  <style>
+    /* 改用更細的字體，像螢幕顯示字 */
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@200;300;400&display=swap');
+
+    body {
+      background-color: #000;
+      color: #ff4de6;
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 300;              /* 比原本更細 */
+      letter-spacing: 0.05em;       /* 稍微拉開一點間距更有電子感 */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-size: 2rem;
+      overflow: hidden;
+      transition: opacity 2s ease;
+    }
+
+    #text {
+      white-space: pre;
+      border-right: 0.15em solid #ff4de6;
+      animation: blink 0.7s step-end infinite;
+      z-index: 1;
+    }
+
+    @keyframes blink {
+      from, to { border-color: transparent; }
+      50% { border-color: #ff4de6; }
+    }
+
+    /* 背景掃描線 */
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.05) 0,
+        rgba(255,255,255,0.05) 1px,
+        transparent 2px,
+        transparent 4px
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="text"></div>
+
+  <script>
+    const textEl = document.getElementById("text");
+    const firstText = "Press any key to continue";
+    const secondText = "See you tomorrow";
+    let index = 0;
+    let showingSecond = false;
+
+    function typeText(text, callback) {
+      textEl.textContent = "";
+      index = 0;
+      const interval = setInterval(() => {
+        textEl.textContent = text.slice(0, index++);
+        if (index > text.length) {
+          clearInterval(interval);
+          if (callback) callback();
+        }
+      }, 100); // 打字速度
+    }
+
+    typeText(firstText);
+
+    document.addEventListener("keydown", () => {
+      if (!showingSecond) {
+        showingSecond = true;
+        typeText(secondText, () => {
+          setTimeout(() => {
+            document.body.style.opacity = 0;
+          }, 1000);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
